@@ -14,7 +14,7 @@ const createBooks = async function (req, res) {
            .status(400)
            .send({ status: false, message: "No input provided" });
        }
-       const { title, excerpt, userId, ISBN,category,subcategory } = data
+       const { title, excerpt, userId, ISBN,category,subcategory ,releasedAt} = data
        
        if (!title) {
          return res.status(400).send({ status: false, message: "please enter the title" })
@@ -22,6 +22,15 @@ const createBooks = async function (req, res) {
        if (!Validations.isValidString(title)) {
          return res.status(400).send({ status: false, message: " provide valid title values" })
        }
+
+       const titleValidation = await BooksModel.findOne({title:title})
+       if (titleValidation != null) {
+           return res.status(400).send({ status: false, message: "this title is already present" })
+         }
+
+
+
+
 
 
        if (!excerpt) {
@@ -76,9 +85,16 @@ const createBooks = async function (req, res) {
 
 
          
-    //   if(!releasedAt) {
-    //     return res.status(400).send({ status: false, message: "please enter the  rteleasing date" })
-    //   }
+      if(!releasedAt) {
+        return res.status(400).send({ status: false, message: "please enter the  releasing date" })
+      }
+
+      if (!Validations.isValidDate(releasedAt)) {
+        return res.status(400).send({ status: false, message: " provide valid date formate" })
+      }
+
+
+      
 
 
        const createBooks = await BooksModel.create(data);

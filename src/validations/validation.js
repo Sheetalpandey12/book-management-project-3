@@ -61,6 +61,17 @@ const isValidPincode=function(pincode){
    }
 
 
+   //________________________validation date formate___________________________________
+   const isValidDate= function(releasedAt){
+
+    const ValidateDate =  /^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$/;
+   return ValidateDate.test(releasedAt)
+
+ 
+   }
+
+
+
 //__________________________ Export : Modules  ___________________________________________
 
 module.exports = {
@@ -71,7 +82,8 @@ module.exports = {
   isValidMobileNumber,
   isValidPincode,
   isVaidUserId,
-  isValidISBN
+  isValidISBN,
+  isValidDate
 
   
 };
