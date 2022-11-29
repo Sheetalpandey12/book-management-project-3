@@ -14,5 +14,7 @@ router.post("/register",userController.createUser)
 router.post("/login",userController.login)
 router.post("/books",middleware.authenticate,middleware.authorize,BooksController.createBooks)
 router.get("/books",middleware.authenticate,BooksController.getBooksData)
+router.put("/books/:bookId",middleware.authenticate,middleware.authorize,BooksController.updateBooksData)
+router.delete("/books/:bookId",middleware.authenticate,middleware.authorize,BooksController.deleteBooksData)
 
 module.exports = router

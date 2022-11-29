@@ -12,14 +12,15 @@ const isValidEmail = function (email) {
 //__________________________ Validations : password  ___________________________________________
       // Password Id Validation
     const  isValidPassword = function (password) {
-        const passwordRegex = /[a-zA-Z0-9]{6,10}[@#$%]{3,5}/;
-        //Minimum 1 Upper add, Minimum 3 Lower Case,Mininum 1 specia; Symbol like (@#$%),mininum 1 number
+      passwordRegex = /^(?=.[a-z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%*?&]{8,15}$/;
+      
         return passwordRegex.test(password)
     };
 
 //__________________________ Validations : MobileNumber  ___________________________________________
 const isValidMobileNumber = function (phone) {
-    const MobileNumberRegex = /^(\+\d{1,3}[- ]?)?\d{10}$/;
+    const MobileNumberRegex =/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[6789]\d{9}$/;
+    
     return MobileNumberRegex.test(phone);
   };
 
@@ -45,7 +46,7 @@ const isValidPincode=function(pincode){
 
   //_______________________Validations:UserId____________________________________________
 
-  const isVaidUserId= function(userId){
+  const isValidId= function(userId){
     let Id= mongoose.Types.ObjectId
       return Id.isValid(userId)
   }
@@ -70,6 +71,16 @@ const isValidPincode=function(pincode){
  
    }
 
+   //______________________validation :name_________________________________________
+   const isValidStringName= function(name){
+
+    const ValidateName =/^[A-Za-z][A-Za-z ._]{5,30}$/;
+    
+   return ValidateName.test(name)
+
+ 
+   }
+
 
 
 //__________________________ Export : Modules  ___________________________________________
@@ -81,9 +92,10 @@ module.exports = {
   isValidPassword,
   isValidMobileNumber,
   isValidPincode,
-  isVaidUserId,
+  isValidId,
   isValidISBN,
-  isValidDate
+  isValidDate,
+  isValidStringName
 
   
 };

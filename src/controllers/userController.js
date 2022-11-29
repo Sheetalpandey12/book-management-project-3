@@ -34,6 +34,12 @@ const createUser = async function (req, res) {
        if (!Validations.isValidString(name)) {
          return res.status(400).send({ status: false, message: " name must be a proper string value" })
        }
+
+       if (!Validations.isValidStringName(name)) {
+        return res.status(400).send({ status: false, message: " name must be a proper string value" })
+      }
+      
+
    
     
        if (!phone) {

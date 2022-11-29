@@ -23,6 +23,12 @@ const createBooks = async function (req, res) {
          return res.status(400).send({ status: false, message: " provide valid title values" })
        }
 
+       if (!Validations.isValidStringName(title)) {
+        return res.status(400).send({ status: false, message: " provide valid title values" })
+      }
+      
+
+
        const titleValidation = await BooksModel.findOne({title:title})
        if (titleValidation != null) {
            return res.status(400).send({ status: false, message: "this title is already present" })
@@ -40,12 +46,16 @@ const createBooks = async function (req, res) {
         return res.status(400).send({ status: false, message: " provide valid excerpt values" })
       }
 
+      if (!Validations.isValidStringName(excerpt)) {
+        return res.status(400).send({ status: false, message: " provide valid title values" })
+      }
+
 
       
       if (!userId) {
         return res.status(400).send({ status: false, message: "please enter the  userId" })
       }
-      if (!Validations.isVaidUserId(userId)) {
+      if (!Validations.isValidId(userId)) {
         return res.status(400).send({ status: false, message: "userId is not valid" })
       }
 
@@ -73,6 +83,11 @@ const createBooks = async function (req, res) {
       if (!Validations.isValidString(category)) {
         return res.status(400).send({ status: false, message: " provide valid excerpt values" })
       }
+        if (!Validations.isValidStringName(category)) {
+          return res.status(400).send({ status: false, message: " provide valid title values" })
+        }
+  
+      
 
 
         
@@ -82,6 +97,11 @@ const createBooks = async function (req, res) {
       if (!Validations.isValidString(subcategory)) {
         return res.status(400).send({ status: false, message: " provide valid excerpt values" })
       }
+
+      if (!Validations.isValidStringName(subcategory)) {
+        return res.status(400).send({ status: false, message: " provide valid title values" })
+      }
+
 
 
          
@@ -121,7 +141,7 @@ const createBooks = async function (req, res) {
         if(Object.keys(data).length==0){
             return res
             .status(400)
-            .send({ status: false, message:"provide some query" });
+            .send({ status: false, message:"provide some query"});
 
         }
 
@@ -150,4 +170,151 @@ const createBooks = async function (req, res) {
    }
 
 
-   module.exports= {createBooks,getBooksData}
+
+
+   //________________update books data____________
+
+
+
+   const updateBooksData =  async function(req,res){
+    try{
+
+      let bookId= req.params.bookId
+
+
+      if (!Validations.isValidId(bookId)) {
+        return res.status(400).send({ status: false, message: "bookId is not valid" })
+      }
+
+
+        let queryParams= req.query
+        if(Object.keys(queryParams).length==0){
+            return res
+            .status(400)
+            .send({ status: false, message:"provide some query" });
+
+        }
+        let data= req.body
+
+        let {title,excerpt,releasedAt,ISBN} = data
+
+        if(Object.keys(data).length==0){
+          return res
+          .status(400)
+          .send({ status: false, message:"provide data in the body" });
+
+      }
+      if (!Validations.isValidString(title)) {
+        return res.status(400).send({ status: false, message: "provide valid title values" })
+      }
+
+      const titleValidation = await BooksModel.findOne({title:title})
+      if (titleValidation != null) {
+          return res.status(400).send({ status: false, message: "this title is already present" })
+        }
+
+        if(releasedAt){
+        if (!Validations.isValidDate(releasedAt)) {
+          return res.status(400).send({ status: false, message:"provide valid date formate"})
+        }
+
+      }
+
+
+
+      if(ISBN){
+
+      if (!Validations.isValidISBN(ISBN)) {
+          return res.status(400).send({ status: false, message: "ISBN is not valid" })
+        }
+
+        const ISBNValidation = await BooksModel.findOne({ISBN:ISBN})
+        if(ISBNValidation!= null){
+          return res.status(400).send({ status: false, message: " ISBN  is already present" })
+        }
+
+      }
+      
+
+
+       
+
+        let Booksdata= await BooksModel.find({_id:bookId, isDeleted:false})
+
+        if(Booksdata.length==0){
+            return res.status(404).send({status:false,message:"your request is not correct,already deleted"})
+        }
+
+        let updateBooksData= await BooksModel.findOneAndUpdate(queryParams,{$set:data},{new:true}) 
+
+
+        res.status(200).send({status:true, message:"success", data:updateBooksData})
+ 
+
+    }catch(error){
+        return res.status(500).send({ status: false, message: error.message })
+    }
+   }
+
+
+
+
+  //_____________delete Books____________________________//
+  const deleteBooksData =  async function(req,res){
+    try{
+
+      let userId = req.query.userId
+      if(!userId){
+        return res.status(400).send({ status: false, message:"userId is required in query for authorization" })
+      }
+
+        if (!Validations.isValidId(userId)) {
+          return res.status(400).send({ status: false, message:"userId is not valid" })
+        }
+
+      
+
+      let bookId= req.params.bookId
+
+
+      if (!Validations.isValidId(bookId)) {
+        return res.status(400).send({ status: false, message: "bookId is not valid" })
+      }
+
+
+     
+
+
+     
+
+        let Booksdata= await BooksModel.find({_id:bookId, isDeleted:false})
+
+        if(Booksdata.length==0){
+            return res.status(404).send({status:false,message:"your request is not correct,already deleted"})
+        }
+
+        let updateBooksData= await BooksModel.findOneAndUpdate({_id:bookId},{$set:{isDeleted:true}},{new:true}) 
+
+
+        res.status(200).send({status:true, message:"success", data:updateBooksData})
+ 
+
+    }catch(error){
+        return res.status(500).send({ status: false, message: error.message })
+    }
+   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   module.exports= {createBooks,getBooksData,updateBooksData,deleteBooksData}

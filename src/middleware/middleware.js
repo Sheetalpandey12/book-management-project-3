@@ -22,7 +22,7 @@ const authenticate = (req, res, next) => {
 const authorize= function ( req, res, next) {
     try{
 
-      if (req.body.userId  == req.decode.userId ) return next();
+      if (req.query.userId  == req.decode.userId ) return next();
       else return res.status(403).send({ status: false, msg: "you are not authorised !" });
 
     }catch(error){
