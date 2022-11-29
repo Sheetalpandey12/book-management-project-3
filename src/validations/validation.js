@@ -5,14 +5,14 @@ const mongoose = require("mongoose");
 //________________________ Validations : Email  ___________________________________________
 
 const isValidEmail = function (email) {
-  const emailRegex =/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[com]+)*$/;
+  const emailRegex =/^(\<)?[\w\d._%+-]+@(?:[\w\d-]+\.)+(\w{2,4})(\>)?(,|$)/
   return emailRegex.test(email);
 };
 
 //__________________________ Validations : password  ___________________________________________
       // Password Id Validation
     const  isValidPassword = function (password) {
-      passwordRegex = /^(?=.[a-z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%*?&]{8,15}$/;
+      passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/;
       
         return passwordRegex.test(password)
     };
@@ -74,7 +74,7 @@ const isValidPincode=function(pincode){
    //______________________validation :name_________________________________________
    const isValidStringName= function(name){
 
-    const ValidateName =/^[A-Za-z][A-Za-z ._]{5,30}$/;
+    const ValidateName =/^[A-Za-z ][A-Za-z ]{2,}$/;
     
    return ValidateName.test(name)
 

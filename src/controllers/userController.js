@@ -32,7 +32,7 @@ const createUser = async function (req, res) {
          return res.status(400).send({ status: false, message: "please enter the name" })
        }
        if (!Validations.isValidString(name)) {
-         return res.status(400).send({ status: false, message: " name must be a proper string value" })
+         return res.status(400).send({ status: false, message: " name must be a proper string value it can't be empty" })
        }
 
        if (!Validations.isValidStringName(name)) {
@@ -46,7 +46,7 @@ const createUser = async function (req, res) {
          return res.status(400).send({ status: false, message: "please enter the mobileNumber" })
        }
        if (!Validations.isValidMobileNumber(phone)) {
-         return res.status(400).send({ status: false, message: "Invalid mobileNumber" })
+         return res.status(400).send({ status: false, message: "mobile number must start with [9,8,7,6] in order to get the indian mobile number " })
        }
        
          const phoneValidation = await UserModel.findOne({ phone: phone })
@@ -70,7 +70,7 @@ const createUser = async function (req, res) {
         return res.status(400).send({ status: false, message: "Please Provide password" })
       }
       if (!Validations.isValidPassword(password)) {
-        return res.status(400).send({ status: false, message: "Invalid password" })
+        return res.status(400).send({ status: false, message: "length must be between 8 to 15 and it conatins atleast one special character and atleast one number values" })
       }
   
       const passwordValidation = await UserModel.findOne({ password: password})
@@ -82,13 +82,24 @@ const createUser = async function (req, res) {
         return res.status(400).send({ status: false, message: "Please Provide address" })
         
       }
-      if(!(address.street || address.city || address.pincode)){
+      if(!(address.street && address.city && address.pincode)){
       return res.status(400).send({status:false,message:"street , city and pincode, you must provide all three values"})
       }
-      if(!Validations.isValidString((address.street || address.city  ))){
-        return res.status(400).send({ status: false, message: "you must provide valid values for street and city" })
+      if(!Validations.isValidString((address.street))){
+        return res.status(400).send({ status: false, message: "you must provide valid values for street" })
 
      }
+
+     if(!Validations.isValidString((address.city))){
+      return res.status(400).send({ status: false, message: "you must provide valid values for city values" })
+
+   }
+   if (!Validations.isValidStringName(address.city)) {
+    return res.status(400).send({ status: false, message:"provide valid  city values" })
+  }
+  
+
+
 
      if(!Validations.isValidPincode(address.pincode)){
         return res.status(400).send({ status: false, message: " pincode is not a valid pincode" })

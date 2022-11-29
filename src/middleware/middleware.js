@@ -22,8 +22,8 @@ const authenticate = (req, res, next) => {
 const authorize= function ( req, res, next) {
     try{
 
-      if (req.query.userId  == req.decode.userId ) return next();
-      else return res.status(403).send({ status: false, msg: "you are not authorised !" });
+      if (req.query.userId  == req.decode.userId || req.body.userId  == req.decode.userId  ) return next();
+      else return res.status(403).send({ status: false, msg: "you are not authorised !,userId must present in the query params" });
 
     }catch(error){
       return res.status(500).send({msg: error.message})
