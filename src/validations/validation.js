@@ -81,6 +81,27 @@ const isValidPincode=function(pincode){
  
    }
 
+   //________________________validation:ratings________________________________________//
+   const isValidRating = function(rating){
+
+    const ValidateRating =/[1-5]{1}/;
+    
+   return ValidateRating.test(rating)
+
+ 
+   }
+
+
+   //____________________________validations:Review______________________________//
+   const isValidReview = function(review){
+
+    const ValidateReview =/[a-zA-Z0-9]{3,}/;
+    
+   return ValidateReview.test(review)
+
+ 
+   }
+
 
 
 //__________________________ Export : Modules  ___________________________________________
@@ -95,7 +116,10 @@ module.exports = {
   isValidId,
   isValidISBN,
   isValidDate,
-  isValidStringName
+  isValidStringName,
+  isValidRating,
+  isValidReview
+  
 
   
 };

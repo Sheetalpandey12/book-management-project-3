@@ -149,7 +149,7 @@ const createBooks = async function (req, res) {
 
         let t1= {_id:1,title:1,excerpt:1,userId:1,category:1,releasedAt:1,reviews:1}
 
-        let Booksdata= await BooksModel.find({$and:[data,{isDeleted:false}]}).select(t1)
+        let Booksdata= await BooksModel.find({$and:[data,{isDeleted:false}]}).sort({title:1}).select(t1)
 
         if(Booksdata.length==0){
             return res.status(404).send({status:false,message:"your request is not correct"})
@@ -403,4 +403,6 @@ const createBooks = async function (req, res) {
 
 
 
-   module.exports= {createBooks,getBooksData,updateBooksData,deleteBooksData,getBooksDataWithReviews}
+   module.exports= {createBooks,getBooksData,
+    updateBooksData,deleteBooksData,
+    getBooksDataWithReviews}
