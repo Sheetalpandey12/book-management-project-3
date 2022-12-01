@@ -9,13 +9,17 @@ const createReview = async function (req, res) {
 
    
      try {
+
+
+    const bookId=  req.params.bookId
        const data = req.body
        if (Object.keys(data).length == 0) {
          return res
            .status(400)
            .send({ status: false, message: "No input provided" });
        }
-       const { bookId,rating,review} = data
+       const {rating,review,reviewedBy,reviewedAt} = data
+      
        if (!bookId) {
          return res.status(400).send({ status: false, message: "please enter the bookId" })
        }
@@ -23,24 +27,30 @@ const createReview = async function (req, res) {
          return res.status(400).send({ status: false, message: "bookId is not valid" })
        }
 
+
    
-      //  if (!reviewedBy) {
-      //   return res.status(400).send({ status: false, message: "please enter reviewer's name" })
-      // }
+       if (Object.keys(data).includes("reviewedBy") ) {
+        
+      if (!Validations.isValidString(reviewedBy)) {
+        return res.status(400).send({ status: false, message: "reviewer's name must not empty" })
+      }
+      if (!Validations.isValidStringName(reviewedBy)) {
+        return res.status(400).send({ status: false, message: "reviewer's name must be a proper string value" })
+      }
+    }
+    
 
-      // if (!Validations.isValidString(reviewedBy)) {
-      //   return res.status(400).send({ status: false, message: "reviewer's name must not empty" })
-      // }
-      // if (!Validations.isValidStringName(reviewedBy)) {
-      //   return res.status(400).send({ status: false, message: "reviewer's name must be a proper string value" })
-      // }
+      if (!reviewedAt) {
+        return res.status(400).send({ status: false, message: "please enter reviewed time" })
+      }
+    
+      if (!Validations.isValidDate(reviewedAt)) {
+        return res.status(400).send({ status: false, message: "please provide the date like (year,month,day) " })
+      }
 
-      // if (!reviewedAt) {
-      //   return res.status(400).send({ status: false, message: "please enter reviewed time" })
-      // }
-      // if (!Validations.isValidString(reviewedAt)) {
-      //   return res.status(400).send({ status: false, message: "please provide the date or any date formate" })
-      // }
+
+
+
       if (!rating) {
         return res.status(400).send({ status: false, message: "please enter the rating " })
       }
@@ -96,7 +106,7 @@ const createReview = async function (req, res) {
         
 
 
-        return res.status(201).send({ status: true, data:addReview })
+        return res.status(201).send({ status: true,message:"success", data:addReview })
      }
      catch (err) {
        return res.status(500).send({ status: false, message: err.message })
@@ -206,14 +216,14 @@ const createReview = async function (req, res) {
 
      
 
-         const createCollege = await ReviewModel.findOneAndUpdate({_id:reviewId},{$set:data},{new:true});
+         const updateNewReviews = await ReviewModel.findOneAndUpdate({_id:reviewId,bookId:bookId},{$set:data},{new:true}).select({isDeleted:0,createdAt:0,updatedAt:0,__v:0})
       // return res.status(201).send({ status: true, data: createCollege })
 
 
-      const checkNewReviewData= await ReviewModel.find({bookId:bookId}).select({isDeleted:0,createdAt:0,updatedAt:0,__v:0})
+      // const checkNewReviewData= await ReviewModel.find({bookId:bookId}).select({isDeleted:0,createdAt:0,updatedAt:0,__v:0})
 
 
-      booksWithDeletedkey["reviewsData"]= checkNewReviewData
+      booksWithDeletedkey["reviewsData"]= updateNewReviews
 
 
         return res.status(201).send({ status: true, data: booksWithDeletedkey })
@@ -274,16 +284,18 @@ const createReview = async function (req, res) {
        
      }
 
-    //  const deleteReviewsChecking = await ReviewModel.findOne({_id:reviewId,isDeleted:false})
-    //  if(deleteReviewsChecking== null){
-    //   return res.status(400).send({ status: false, message:"this review is already deleted"})
+     const deleteReviewsChecking = await ReviewModel.findOne({_id:reviewId,isDeleted:false})
+     if(deleteReviewsChecking== null){
+      return res.status(400).send({ status: false, message:"this review is already deleted"})
 
-    //  }
-        const deleteReviews = await ReviewModel.findOneAndUpdate({_id:reviewId},{$set:{isDeleted:true}},{new:true});
+     }
+
+
+        const deleteReviews = await ReviewModel.findOneAndUpdate({_id:reviewId,bookId:bookId},{$set:{isDeleted:true}},{new:true})
      // return res.status(201).send({ status: true, data: createCollege })
 
 
-     const checkNewReviewData= await ReviewModel.find({bookId:bookId}).select({isDeleted:0,createdAt:0,updatedAt:0,__v:0})
+      const checkNewReviewData= await ReviewModel.find({bookId:bookId}).select({isDeleted:0,createdAt:0,updatedAt:0,__v:0})
 
 
      booksWithDeletedkey["reviewsData"]= checkNewReviewData
@@ -305,24 +317,6 @@ const createReview = async function (req, res) {
       return res.status(500).send({ status: false, message: err.message })
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

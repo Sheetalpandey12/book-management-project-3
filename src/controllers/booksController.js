@@ -1,5 +1,6 @@
 const BooksModel= require("../models/booksModel");
 const UserModel = require("../models/UserModel");
+const ReviewModel= require("../models/reviewModel")
 
 const Validations= require("../validations/validation")
 
@@ -138,12 +139,12 @@ const createBooks = async function (req, res) {
     try{
 
         let data= req.query
-        if(Object.keys(data).length==0){
-            return res
-            .status(400)
-            .send({ status: false, message:"provide some query"});
+        // if(Object.keys(data).length==0){
+        //     return res
+        //     .status(400)
+        //     .send({ status: false, message:"provide some query"});
 
-        }
+        // }
 
 
 
@@ -197,9 +198,11 @@ const createBooks = async function (req, res) {
             return res.status(400).send({status:false,message:"your request is not correct,book is already deleted"})
         }
 
+        let getBooksDataWithReviews= await ReviewModel.find({bookId:bookId}).select({isDeleted:0,createdAt:0,updatedAt:0,__v:0})
+
 
         
-        Booksdata["reviewsData"]= []
+        Booksdata["reviewsData"]= getBooksDataWithReviews
 
 
 
@@ -274,14 +277,12 @@ const createBooks = async function (req, res) {
 
         if(releasedAt){
         if (!Validations.isValidDate(releasedAt)) {
-          return res.status(400).send({ status: false, message:"provide valid date formate"})
+          return res.status(400).send({ status: false, message:"provide valid date formate like(year,month,date)"})
         }
 
-      }
+       }
 
-
-
-      if(ISBN){
+    if(ISBN){
 
       if (!Validations.isValidISBN(ISBN)) {
           return res.status(400).send({ status: false, message: "ISBN is not valid" })
@@ -299,8 +300,8 @@ const createBooks = async function (req, res) {
         return res.status(404).send({status:false,message:" bookId is not correct "})
     }
    
-
-
+  let x=BooksDataGettingWithId.userId.toString()
+   console.log(x)
 
 
 
@@ -382,7 +383,7 @@ const createBooks = async function (req, res) {
         let updateBooksData= await BooksModel.findOneAndUpdate({_id:bookId},{$set:{isDeleted:true}},{new:true}) 
 
 
-        res.status(200).send({status:true, message:"success", data:updateBooksData})
+        res.status(200).send({status:true, message:"deleted successfully"})
  
 
     }catch(error){
