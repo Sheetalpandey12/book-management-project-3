@@ -19,6 +19,8 @@ const createReview = async function (req, res) {
            .send({ status: false, message: "No input provided" });
        }
        const {rating,review,reviewedBy,reviewedAt} = data
+       data["bookId"]= bookId
+       
       
        if (!bookId) {
          return res.status(400).send({ status: false, message: "please enter the bookId" })
@@ -97,7 +99,7 @@ const createReview = async function (req, res) {
 
        const addReview = await BooksModel.findOneAndUpdate({_id:bookId},{$inc:{
         reviews:1
-        }}).lean()
+        }},{new:true}).lean()
 
 
         addReview["reviewsData"]= newReviewData
@@ -310,7 +312,7 @@ const createReview = async function (req, res) {
 
 
         
-      return res.status(200).send({ status: true, data1: booksWithUpdation })
+      return res.status(200).send({ status: true, message: " reviews decreases by 1", data1: booksWithUpdation })
 
     }
     catch (err) {

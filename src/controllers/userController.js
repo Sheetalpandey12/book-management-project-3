@@ -89,6 +89,11 @@ const createUser = async function (req, res) {
         return res.status(400).send({ status: false, message: "you must provide valid values for street" })
 
      }
+    
+    if(!Validations.isValidSreet((address.street))){
+      return res.status(400).send({ status: false, message: " please provide a valid street" })
+
+   }
 
      if(!Validations.isValidString((address.city))){
       return res.status(400).send({ status: false, message: "you must provide valid values for city values" })

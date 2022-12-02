@@ -198,7 +198,7 @@ const createBooks = async function (req, res) {
             return res.status(400).send({status:false,message:"your request is not correct,book is already deleted"})
         }
 
-        let getBooksDataWithReviews= await ReviewModel.find({bookId:bookId}).select({isDeleted:0,createdAt:0,updatedAt:0,__v:0})
+        let getBooksDataWithReviews= await ReviewModel.find({bookId:bookId,isDeleted:false}).select({isDeleted:0,createdAt:0,updatedAt:0,__v:0})
 
 
         
@@ -266,23 +266,53 @@ const createBooks = async function (req, res) {
           .send({ status: false, message:"provide data in the body" });
 
       }
+
+      if(Object.keys(data).includes("title")){
       if (!Validations.isValidString(title)) {
         return res.status(400).send({ status: false, message: "provide valid title values" })
       }
-
+      if (!Validations.isValidStringName(title)) {
+        return res.status(400).send({ status: false, message: "provide valid title values" })
+      }
+      
       const titleValidation = await BooksModel.findOne({title:title})
       if (titleValidation != null) {
           return res.status(400).send({ status: false, message: "this title is already present" })
         }
 
-        if(releasedAt){
+    }
+
+
+    if(Object.keys(data).includes("excerpt")){
+      if (!Validations.isValidString(excerpt)) {
+        return res.status(400).send({ status: false, message: "provide valid excerpt values" })
+      }
+      if (!Validations.isValidStringName(excerpt)) {
+        return res.status(400).send({ status: false, message: "provide valid excerpt values" })
+      }
+    }
+
+
+
+
+
+
+
+
+
+      // const titleValidation = await BooksModel.findOne({title:title})
+      // if (titleValidation != null) {
+      //     return res.status(400).send({ status: false, message: "this title is already present" })
+      //   }
+
+        if( Object.keys(data).includes("releasedAt")){
         if (!Validations.isValidDate(releasedAt)) {
           return res.status(400).send({ status: false, message:"provide valid date formate like(year,month,date)"})
         }
 
        }
 
-    if(ISBN){
+    if(Object.keys(data).includes("ISBN")){
 
       if (!Validations.isValidISBN(ISBN)) {
           return res.status(400).send({ status: false, message: "ISBN is not valid" })

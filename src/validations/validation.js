@@ -74,7 +74,7 @@ const isValidPincode=function(pincode){
    //______________________validation :name_________________________________________
    const isValidStringName= function(name){
 
-    const ValidateName =/^[A-Za-z ][A-Za-z ]{2,}$/;
+    const ValidateName =/^[A-Za-z ][A-Za-z -._]{2,}$/;
     
    return ValidateName.test(name)
 
@@ -103,6 +103,19 @@ const isValidPincode=function(pincode){
    }
 
 
+   //_________________________________validation :Gali_____________________________//
+
+
+   const isValidSreet = function(street){
+
+    const ValidateStrret =/^[A-Za-z ][A-Za-z -._ : = 0-9]{2,}$/;
+    
+   return ValidateStrret.test(street)
+
+ 
+   }
+
+
 
 //__________________________ Export : Modules  ___________________________________________
 
@@ -118,7 +131,8 @@ module.exports = {
   isValidDate,
   isValidStringName,
   isValidRating,
-  isValidReview
+  isValidReview,
+  isValidSreet
   
 
   
