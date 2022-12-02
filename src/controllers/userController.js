@@ -73,10 +73,10 @@ const createUser = async function (req, res) {
         return res.status(400).send({ status: false, message: "length must be between 8 to 15 and it conatins atleast one special character and atleast one number values" })
       }
   
-      const passwordValidation = await UserModel.findOne({ password: password})
-      if (passwordValidation != null) {
-        return res.status(400).send({ status: false, message: "this password is already register" })
-      }
+      // const passwordValidation = await UserModel.findOne({ password: password})
+      // if (passwordValidation != null) {
+      //   return res.status(400).send({ status: false, message: "this password is already register" })
+      // }
 
       if (!address) {
         return res.status(400).send({ status: false, message: "Please Provide address" })
