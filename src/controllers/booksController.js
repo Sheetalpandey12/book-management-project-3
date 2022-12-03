@@ -104,15 +104,19 @@ const createBooks = async function (req, res) {
       }
 
 
+      
+
+
 
          
-      if(!releasedAt) {
-        return res.status(400).send({ status: false, message: "please enter the  releasing date" })
-      }
+      if(Object.keys(data).includes("releasedAt")) {
+        
+      
 
       if (!Validations.isValidDate(releasedAt)) {
-        return res.status(400).send({ status: false, message: " provide valid date formate" })
+        return res.status(400).send({ status: false, message: " provide valid date formate(year,month,date)" })
       }
+    }
 
 
       

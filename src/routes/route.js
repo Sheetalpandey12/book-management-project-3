@@ -23,4 +23,9 @@ router.put("/books/:bookId/review/:reviewId",ReviewController.updateReviews)
 router.delete("/books/:bookId/review/:reviewId",ReviewController.deleteReviews)
 
 
+router.all("/*", function(req,res){
+    res.status(400).send({message:"url is wrong"})
+})
+
+
 module.exports = router
