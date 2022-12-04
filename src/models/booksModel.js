@@ -49,6 +49,8 @@ const booksSchema= new mongoose.Schema({
             trim:true
             
         },
+
+        deletedAt :String,
         isDeleted:{
             type:Boolean,
             default:false
@@ -56,7 +58,8 @@ const booksSchema= new mongoose.Schema({
         releasedAt:{
             type:Date,
             required:true,
-            default:moment().format("YYYY-MM-DD")
+            trim:true
+           // default:moment().format("YYYY-MM-DD")
         }   
 
 

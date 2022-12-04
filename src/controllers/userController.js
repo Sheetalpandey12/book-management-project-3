@@ -70,7 +70,7 @@ const createUser = async function (req, res) {
         return res.status(400).send({ status: false, message: "Please Provide password" })
       }
       if (!Validations.isValidPassword(password)) {
-        return res.status(400).send({ status: false, message: "length must be between 8 to 15 and it conatins atleast one special character and atleast one number values" })
+        return res.status(400).send({ status: false, message: "length must be between 8 to 15 and it conatins atleast one special character and atleast one number values and atleaset one character" })
       }
   
       // const passwordValidation = await UserModel.findOne({ password: password})
@@ -78,10 +78,10 @@ const createUser = async function (req, res) {
       //   return res.status(400).send({ status: false, message: "this password is already register" })
       // }
 
-      if (!address) {
-        return res.status(400).send({ status: false, message: "Please Provide address" })
+      if (Object.keys(data).includes("address")) {
+      
         
-      }
+      
       if(!(address.street && address.city && address.pincode)){
       return res.status(400).send({status:false,message:"street , city and pincode, you must provide all three values"})
       }
@@ -102,6 +102,7 @@ const createUser = async function (req, res) {
    if (!Validations.isValidStringName(address.city)) {
     return res.status(400).send({ status: false, message:"provide valid  city values" })
   }
+
   
 
 
@@ -110,10 +111,11 @@ const createUser = async function (req, res) {
         return res.status(400).send({ status: false, message: " pincode is not a valid pincode" })
 
      }
+    }
 
 
        const createCollege = await UserModel.create(data);
-       return res.status(201).send({ status: true, data: createCollege })
+       return res.status(201).send({ status: true,message:"success", data: createCollege })
      }
      catch (err) {
        return res.status(500).send({ status: false, message: err.message })
@@ -137,12 +139,12 @@ const createUser = async function (req, res) {
         if (!email) return res.status(400).send({ msg: " email is required " })
         if (!password) return res.status(400).send({ msg: "  password is required " })
 
-        if (!Validations.isValidString(email)) {
+        if (!Validations.isValidEmail(email)) {
             return res.status(400).send({status: false,msg: "please provide valid email details"});
         }
         
-        if (!Validations.isValidString(password)) {
-          return res.status(400).send({status: false,msg: "please provide valid password details"});
+        if (!Validations.isValidPassword(password)) {
+          return res.status(400).send({status: false,msg: "length must be between 8 to 15 and it conatins atleast one special character and atleast one number values and atleaset one character"});
       }
 
 
@@ -150,7 +152,7 @@ const createUser = async function (req, res) {
 
 
         let loggedUser = await UserModel.findOne({ email: email, password: password })
-        if (loggedUser == null) return res.status(400).send({ msg: "Email or Password is not a registered email or password" })
+        if (loggedUser == null) return res.status(404).send({ msg: "Email or Password is not a registered email or password" })
 
         let token = jwt.sign(
             {

@@ -1,6 +1,7 @@
 const BooksModel= require("../models/booksModel");
 const UserModel = require("../models/UserModel");
 const ReviewModel= require("../models/reviewModel")
+const moment= require("moment");
 
 const Validations= require("../validations/validation")
 
@@ -16,6 +17,7 @@ const createBooks = async function (req, res) {
            .send({ status: false, message: "No input provided" });
        }
        const { title, excerpt, userId, ISBN,category,subcategory ,releasedAt} = data
+       data.releasedAt= moment().format("YYYY-MM-DD")
        
        if (!title) {
          return res.status(400).send({ status: false, message: "please enter the title" })
@@ -62,7 +64,7 @@ const createBooks = async function (req, res) {
 
       const userIdValidation = await UserModel.findOne({_id:userId})
         if (userIdValidation== null) {
-            return res.status(400).send({ status: false, message: "this user Id is not registered" })
+            return res.status(404).send({ status: false, message: "this user Id is not registered" })
           }
 
 
@@ -109,14 +111,18 @@ const createBooks = async function (req, res) {
 
 
          
-      if(Object.keys(data).includes("releasedAt")) {
+      if(!releasedAt){
+        return res.status(400).send({ status: false, message: " please enter release time" })
+
+
+      }
         
       
 
       if (!Validations.isValidDate(releasedAt)) {
         return res.status(400).send({ status: false, message: " provide valid date formate(year,month,date)" })
       }
-    }
+    
 
 
       
@@ -192,14 +198,14 @@ const createBooks = async function (req, res) {
       
       let BooksdatabyId= await BooksModel.findOne({_id:bookId})
       if(BooksdatabyId== null){
-        return res.status(400).send({status:false,message:"this bookId is not registered with this userId"})
+        return res.status(404).send({status:false,message:"this bookId is not registered with this userId"})
     }
 
 
        let Booksdata= await BooksModel.findOne({_id:bookId,isDeleted:false}).lean()
 
         if(Booksdata== null){
-            return res.status(400).send({status:false,message:"your request is not correct,book is already deleted"})
+            return res.status(404).send({status:false,message:"your request is not correct,book is already deleted"})
         }
 
         let getBooksDataWithReviews= await ReviewModel.find({bookId:bookId,isDeleted:false}).select({isDeleted:0,createdAt:0,updatedAt:0,__v:0})
@@ -356,7 +362,7 @@ const createBooks = async function (req, res) {
 
         let updateBooksData= await BooksModel.findOneAndUpdate(queryParams,{$set:data},{new:true}) 
         if(updateBooksData== null){
-          return res.status(400).send({status:false,message:"your request is not correct"})
+          return res.status(404).send({status:false,message:"your request is not correct"})
       }
 
 
@@ -413,11 +419,12 @@ const createBooks = async function (req, res) {
         if(Booksdata.length==0){
             return res.status(404).send({status:false,message:"your request is not correct,already deleted"})
         }
+        let t1=moment().format("YYYY-MM-DD")
 
-        let updateBooksData= await BooksModel.findOneAndUpdate({_id:bookId},{$set:{isDeleted:true}},{new:true}) 
+        let updateBooksData= await BooksModel.findOneAndUpdate({_id:bookId},{$set:{isDeleted:true,deletedAt:t1}},{new:true}) 
 
 
-        res.status(200).send({status:true, message:"deleted successfully"})
+        res.status(200).send({status:true, message:"deleted successfully",data:updateBooksData})
  
 
     }catch(error){
