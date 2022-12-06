@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const moment= require("moment");
+// const moment= require("moment");
 
 const objectId = mongoose.Schema.Types.ObjectId;
 
@@ -59,8 +59,9 @@ const booksSchema= new mongoose.Schema({
             type:Date,
             required:true,
             trim:true
-           // default:moment().format("YYYY-MM-DD")
-        }   
+          
+        },
+        bookCover:String   
 
 
         
