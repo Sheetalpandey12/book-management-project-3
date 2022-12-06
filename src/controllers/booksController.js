@@ -1,7 +1,7 @@
 const BooksModel= require("../models/booksModel");
 const UserModel = require("../models/UserModel");
 const ReviewModel= require("../models/reviewModel")
-const moment= require("moment");
+
 
 const Validations= require("../validations/validation")
 
@@ -10,6 +10,14 @@ const createBooks = async function (req, res) {
 
     
      try {
+
+     if( !(req.body.userId  == req.decode.userId)){
+
+       return res.status(403).send({ status: false, msg: "you are not authorised" })
+     }
+
+
+
        const data = req.body
        if (Object.keys(data).length == 0) {
          return res
@@ -36,9 +44,6 @@ const createBooks = async function (req, res) {
        if (titleValidation != null) {
            return res.status(400).send({ status: false, message: "this title is already present" })
          }
-
-
-
 
 
 
@@ -107,17 +112,12 @@ const createBooks = async function (req, res) {
 
 
       
-
-
-
          
       if(!releasedAt){
         return res.status(400).send({ status: false, message: " please enter release time" })
 
 
-      }
-        
-      
+      }      
 
       if (!Validations.isValidDate(releasedAt)) {
         return res.status(400).send({ status: false, message: " provide valid date formate(year,month,date)" })
@@ -149,14 +149,7 @@ const createBooks = async function (req, res) {
     try{
 
         let data= req.query
-        // if(Object.keys(data).length==0){
-        //     return res
-        //     .status(400)
-        //     .send({ status: false, message:"provide some query"});
-
-        // }
-
-
+     
 
         let t1= {_id:1,title:1,excerpt:1,userId:1,category:1,releasedAt:1,reviews:1}
 
@@ -169,8 +162,6 @@ const createBooks = async function (req, res) {
 
         res.status(200).send({status:true, message:"success", data:Booksdata})
 
-
-      //  Returns all books in the collection that aren't deleted. Return only book _id, title, excerpt, userId, category, releasedAt, reviews field. Response example here
 
 
     
@@ -252,20 +243,10 @@ const createBooks = async function (req, res) {
       }
 
 
-      let userId= req.query.userId
-
-      if (!Validations.isValidId(userId)) {
-        return res.status(400).send({ status: false, message: "userId is not valid" })
-      }
-
-
-        let queryParams= req.query
-        if(Object.keys(queryParams).length==0){
-            return res
-            .status(400)
-            .send({ status: false, message:"provide some query" });
-
-        }
+    
+     let queryParams= req.query
+    
+        queryParams._id= bookId
         let data= req.body
 
         let {title,excerpt,releasedAt,ISBN} = data
@@ -302,18 +283,7 @@ const createBooks = async function (req, res) {
       }
     }
 
-
-
-
-
-
-
-
-
-      // const titleValidation = await BooksModel.findOne({title:title})
-      // if (titleValidation != null) {
-      //     return res.status(400).send({ status: false, message: "this title is already present" })
-      //   }
+    
 
         if( Object.keys(data).includes("releasedAt")){
         if (!Validations.isValidDate(releasedAt)) {
@@ -340,21 +310,8 @@ const createBooks = async function (req, res) {
         return res.status(404).send({status:false,message:" bookId is not correct "})
     }
    
-  let x=BooksDataGettingWithId.userId.toString()
-   console.log(x)
 
-
-
-      if(String(BooksDataGettingWithId["userId"]) !== userId){
-        return res.status(400).send({status:false,message:"this bookId is not associated with this userId "})
-  
-      }
-      
-
-
-       
-
-        let Booksdata= await BooksModel.find({_id:bookId, isDeleted:false})
+             let Booksdata= await BooksModel.find({_id:bookId, isDeleted:false})
 
         if(Booksdata.length==0){
             return res.status(404).send({status:false,message:"your request is not correct, book is already deleted"})
@@ -382,17 +339,7 @@ const createBooks = async function (req, res) {
     try{
 
 
-
-      let userId= req.query.userId
-
-      if (!Validations.isValidId(userId)) {
-        return res.status(400).send({ status: false, message: "userId is not valid" })
-      }
-
-
-    
-       let bookId= req.params.bookId
-
+         let bookId= req.params.bookId
 
       if (!Validations.isValidId(bookId)) {
         return res.status(400).send({ status: false, message: "bookId is not valid" })
@@ -407,19 +354,12 @@ const createBooks = async function (req, res) {
     }
    
 
-    if(String(BooksDataGettingWithId["userId"]) !== userId){
-      return res.status(400).send({status:false,message:"this bookId is not associated with this userId "})
-
-    }
-
-
-
-       let Booksdata= await BooksModel.find({_id:bookId, isDeleted:false})
+     let Booksdata= await BooksModel.find({_id:bookId, isDeleted:false})
 
         if(Booksdata.length==0){
-            return res.status(404).send({status:false,message:"your request is not correct,already deleted"})
+            return res.status(404).send({status:false,message:"your request is not correct,book is already deleted"})
         }
-        let t1=moment().format("YYYY-MM-DD")
+        let t1=Date.now()
 
         let updateBooksData= await BooksModel.findOneAndUpdate({_id:bookId},{$set:{isDeleted:true,deletedAt:t1}},{new:true}) 
 
@@ -436,15 +376,6 @@ const createBooks = async function (req, res) {
 
 
 
-
-
-
-
-
-
-
-
-
-   module.exports= {createBooks,getBooksData,
+ module.exports= {createBooks,getBooksData,
     updateBooksData,deleteBooksData,
     getBooksDataWithReviews}

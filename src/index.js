@@ -1,7 +1,7 @@
 const express= require("express")
 const route= require("./routes/route.js")
 const {default:mongoose}= require("mongoose")
-const { connected } = require("process")
+//const { connected } = require("process")
 const app= express()
 
 app.use(express.json())

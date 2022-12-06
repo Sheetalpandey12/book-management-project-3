@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 
+const BooksModel= require("../models/booksModel");
+
 const authenticate = (req, res, next) => {
     try {
         let token = req.headers["x-api-key"];
@@ -19,11 +21,15 @@ const authenticate = (req, res, next) => {
 }
 
 
-const authorize= function ( req, res, next) {
+const authorize= async function ( req, res, next) {
     try{
 
-      if (req.query.userId  == req.decode.userId || req.body.userId  == req.decode.userId  ) return next();
-      else return res.status(403).send({ status: false, msg: "you are not authorised !,userId must present in the query params" });
+      let bookId= req.params.bookId
+      let gettingUserId= await BooksModel.findOne({_id:bookId})
+     let userId= gettingUserId.userId.toString()
+
+    if (userId  == req.decode.userId || req.body.userId  == req.decode.userId  ) return next();
+      else return res.status(403).send({ status: false, msg: "you are not authorised" });
 
     }catch(error){
       return res.status(500).send({msg: error.message})
