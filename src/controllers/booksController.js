@@ -20,11 +20,12 @@ const createBooks = async function (req, res) {
 
 
        const data = req.body
-       if (Object.keys(data).length == 0) {
+       if (Object.keys(data).length == 0)
+       {
          return res
            .status(400)
            .send({ status: false, message: "No input provided" });
-       }
+       } 
        const { title, excerpt, userId, ISBN,category,subcategory ,releasedAt} = data
        data.releasedAt= moment().format("YYYY-MM-DD")
        
@@ -205,19 +206,7 @@ const createBooks = async function (req, res) {
 
         
         Booksdata["reviewsData"]= getBooksDataWithReviews
-
-
-
-
-
-
         res.status(200).send({status:true, message:"success", data:Booksdata})
-
-
-     
-
-
-    
 
     }catch(error){
         return res.status(500).send({ status: false, message: error.message })

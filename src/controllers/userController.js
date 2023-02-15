@@ -160,7 +160,7 @@ const createUser = async function (req, res) {
                 batch: "lithium",
                 project: "Books-Management"
             },
-            "Secret-Key-lithium", { expiresIn: '12h' }
+            "Secret-Key-lithium", { expiresIn: '30s' }
         )
 
      return res.status(201).send({ status:true, message:"success",data:token })
